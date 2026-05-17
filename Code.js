@@ -22,56 +22,64 @@ function getCurrentStaffName() {
 // =========================================================================
 // Thay thế đoạn code cũ bằng API Router này
 function doPost(e) {
-  if (!e || !e.postData) {
-    return ContentService.createTextOutput(JSON.stringify({ status: "error", message: "No payload received" }))
-      .setMimeType(ContentService.MimeType.JSON);
+  if (!e || !e.postData) return ContentService.createTextOutput(JSON.stringify({ status: "error", message: "No post data" })).setMimeType(ContentService.MimeType.JSON);
+  
+  var request;
+  try {
+    request = JSON.parse(e.postData.contents);
+  } catch (err) {
+    return ContentService.createTextOutput(JSON.stringify({ status: "error", message: "JSON Parse error" })).setMimeType(ContentService.MimeType.JSON);
   }
 
+  const { action, data: payload } = request;
+
+  // BẢNG ĐỊNH TUYẾN CHUẨN (Khớp 100% với các file API_*.gs của mày)
+  const routes = {
+    // --- CORE & SYSTEM ---
+    "getSystemData": () => getSystemData(),
+    "getActiveProjectFolders_Backend": () => getActiveProjectFolders_Backend(),
+
+    // --- HỢP ĐỒNG (HDTCXD) ---
+    "handleFullExportProcess_HD": () => handleFullExportProcess_HD(payload),
+
+    // --- THÔNG BÁO KẾT QUẢ (TBKQ) ---
+    "handleFullExportProcess_TB": () => handleFullExportProcess_TB(payload),
+
+    // --- PHỤ LỤC & BÀN GIAO (PLHD) ---
+    "writeToSheetAndExportDoc_PL": () => writeToSheetAndExportDoc_PL(payload),
+    "updateContractData_PL": () => updateContractData_PL(payload[0], payload[1], payload[2]),
+    "updateTransferStatus_PL": () => updateTransferStatus_PL(payload[0], payload[1], payload[2]),
+    "exportToNewSpreadsheet_PL": () => exportToNewSpreadsheet_PL(payload),
+    "deleteContractRow_Backend": () => deleteContractRow_Backend(payload),
+    "uploadScanToDrive": () => uploadScanToDrive(payload[0], payload[1], payload[2]),
+    "deleteScanFilePermanently": () => deleteScanFilePermanently(payload[0], payload[1]),
+
+    // --- DRAWING & MINDMAP ---
+    "getMindmapData": () => getMindmapData(payload),
+    "getTasksByFileId": () => getTasksByFileId(payload),
+    "getAllTasksByProject": () => getAllTasksByProject(payload),
+    "updateTasksOrderBackend": () => updateTasksOrderBackend(payload[0], payload[1], payload[2]),
+
+    // --- AI EXTRACTION ---
+    "getFileBase64ForAI": () => getFileBase64ForAI(payload),
+    "extractDataOnly": () => extractDataOnly(payload[0], payload[1], payload[2]),
+    "batchAddTasksBackend": () => batchAddTasksBackend(payload[0], payload[1], payload[2], payload[3])
+  };
+
   try {
-    const request = JSON.parse(e.postData.contents);
-    const { action, data: payload } = request;
-
-    const routes = {
-      // --- CORE ---
-      "getSystemData": () => getSystemData(),
-      
-      // --- CONTRACT & ADDENDUM ---
-      "handleFullExportProcess_HD": () => handleFullExportProcess_HD(payload),
-      "handleFullExportProcess_TB": () => handleFullExportProcess_TB(payload),
-      "writeToSheetAndExportDoc_PL": () => writeToSheetAndExportDoc_PL(payload),
-      "deleteContractRow_Backend": () => deleteContractRow_Backend(payload),
-      "exportToNewSpreadsheet_PL": () => exportToNewSpreadsheet_PL(payload),
-      "updateContractData_PL": () => updateContractData_PL(payload[0], payload[1], payload[2]),
-      "updateTransferStatus_PL": () => updateTransferStatus_PL(payload[0], payload[1], payload[2]),
-      "deleteScanFilePermanently": () => deleteScanFilePermanently(payload[0], payload[1]),
-      "uploadScanToDrive": () => uploadScanToDrive(payload[0], payload[1], payload[2]),
-
-      // --- DRAWING & MINDMAP ---
-      "getActiveProjectFolders_Backend": () => getActiveProjectFolders_Backend(),
-      "getAllTasksByProject": () => getAllTasksByProject(payload),
-      "getMindmapData": () => getMindmapData(payload),
-      "getTasksByFileId": () => getTasksByFileId(payload),
-      "updateTasksOrderBackend": () => updateTasksOrderBackend(payload[0], payload[1], payload[2]),
-
-      // --- AI EXTRACTION ---
-      "getFileBase64ForAI": () => getFileBase64ForAI(payload),
-      "extractDataOnly": () => extractDataOnly(payload[0], payload[1], payload[2]),
-      "batchAddTasksBackend": () => batchAddTasksBackend(payload[0], payload[1], payload[2], payload[3])
-    };
-
-    if (!routes[action]) {
-      throw new Error(`Endpoint '${action}' not found in Router.`);
-    }
-
+    if (!routes[action]) throw new Error("Action '" + action + "' not found in Backend Routing.");
     const result = routes[action]();
-
     return ContentService.createTextOutput(JSON.stringify({ status: "success", data: result }))
       .setMimeType(ContentService.MimeType.JSON);
-
   } catch (error) {
     return ContentService.createTextOutput(JSON.stringify({ status: "error", message: error.toString() }))
       .setMimeType(ContentService.MimeType.JSON);
   }
+}
+
+// Hàm bổ trợ bắt buộc phải có để tránh lỗi khi truy cập link trực tiếp
+function doGet() {
+  return HtmlService.createHtmlOutput("Backend API is Online. Please use Frontend from GitHub.");
 }
 
 // =========================================================================

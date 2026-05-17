@@ -1,4 +1,3 @@
-// =========================================================================
 // 3. LOGIC XUẤT FILE HỢP ĐỒNG GỐC (HDTCXD)
 // =========================================================================
 function getLatestContractNumber_HD() {
@@ -251,4 +250,3 @@ function writeToSheetAndExportDoc_TB(data) {
   } catch (e) { 
     throw new Error("Lỗi Backend TBKQ: " + e.message); 
   }
-}

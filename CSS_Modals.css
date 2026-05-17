@@ -1,5 +1,3 @@
-<style>
-/* ==========================================================================
    5.1. ACTION PANELS (EDIT, TRANSFER, SCAN) - FIX MÀU CHỮ & ĐỒNG BỘ
    ========================================================================== */
 
@@ -318,5 +316,3 @@
 .form-container.dim-overlay-active.show-overlay::after {
     opacity: 1;
     visibility: visible;
-}
-</style>

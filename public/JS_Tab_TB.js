@@ -1,4 +1,4 @@
-<script>
+
 // ==========================================================================
 // MODULE: TAB THÔNG BÁO KẾT QUẢ (TBKQ)
 // ==========================================================================
@@ -47,4 +47,3 @@ function clearForm_TB() {
  * đã được định nghĩa trong file JS_Core_API.html 
  * để xử lý giao tiếp với Server.
  */
-</script>

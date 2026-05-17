@@ -1,4 +1,4 @@
-<script>
+
 // ==========================================================================
 // 1. KHỞI TẠO TAB PHỤ LỤC (PL)
 // ==========================================================================
@@ -387,5 +387,3 @@ function toggleAdjustment_PL(id, label, fieldToShow) {
     document.getElementById("field5-pl").value = selectedAdjustmentLabels.join(" | ");
     renderAdjustmentOptions_PL(); 
 }
-
-</script>

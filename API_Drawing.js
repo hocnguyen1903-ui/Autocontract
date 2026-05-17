@@ -1,4 +1,3 @@
-// =========================================================================
 // MODULE DRAWING: BACKEND - QUÉT DRIVE & AI EXTRACTION (5-COLUMN ENGINE)
 // =========================================================================
 
@@ -254,4 +253,3 @@ function getActiveProjectFolders_Backend() {
     while (folders.hasNext()) names.push(folders.next().getName().toUpperCase());
     return names;
   } catch (e) { return []; }
-}

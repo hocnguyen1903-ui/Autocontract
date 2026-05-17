@@ -1,4 +1,3 @@
-// =========================================================================
 // 4. LOGIC XỬ LÝ PHỤ LỤC (PLHD) & BÀN GIAO HỒ SƠ
 // =========================================================================
 function updateTransferStatus_PL(contractNumber, isTransferred, docTypes) {
@@ -553,4 +552,3 @@ function optimizeDocSections(body, validSections) {
 
     body.replaceText("\\{", "");
     body.replaceText("\\}\\s*\\d+", "");
-}
