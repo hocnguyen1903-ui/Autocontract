@@ -552,3 +552,4 @@ function optimizeDocSections(body, validSections) {
 
     body.replaceText("\\{", "");
     body.replaceText("\\}\\s*\\d+", "");
+  }
